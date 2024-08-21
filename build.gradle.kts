@@ -20,8 +20,10 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter")
+	implementation("org.springframework.boot:spring-boot-starter-web:3.3.2")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
@@ -29,6 +31,7 @@ dependencies {
 
 	// SPRING SECURITY
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("jakarta.servlet:jakarta.servlet-api:6.1.0")
 
 	// MONGO DB
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
@@ -39,7 +42,11 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
 	implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
-	implementation("javax.validation:validation-api:2.0.1.Final")
+	implementation("jakarta.validation:jakarta.validation-api:3.1.0")
+
+	// JAVA MAIL SENDER
+	implementation("org.springframework.boot:spring-boot-starter-mail:3.3.2")
+	implementation("org.springframework:spring-context-support:6.1.12")
 }
 
 tasks.withType<KotlinCompile> {

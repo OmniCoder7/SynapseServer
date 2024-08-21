@@ -10,14 +10,11 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
-import org.springframework.web.servlet.HandlerExceptionResolver
-
 
 @Component
 class JwtAuthenticationFilter(
     private val userDetailsService: UserDetailsService,
     private val jwtService: JwtService,
-    private val handlerExceptionResolver: HandlerExceptionResolver
 ) : OncePerRequestFilter() {
 
 
@@ -55,7 +52,6 @@ class JwtAuthenticationFilter(
 
             filterChain.doFilter(request, response)
         } catch (e: Exception) {
-            handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }
 }

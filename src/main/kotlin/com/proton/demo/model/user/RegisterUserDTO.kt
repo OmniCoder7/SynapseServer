@@ -2,8 +2,8 @@ package com.proton.demo.model.user
 
 import com.proton.demo.model.address.Address
 import org.bson.types.ObjectId
-import javax.validation.constraints.Min
-import javax.validation.constraints.NotEmpty
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotEmpty
 
 data class RegisterUserDTO(
     val id: ObjectId = ObjectId(),

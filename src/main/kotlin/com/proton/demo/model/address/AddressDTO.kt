@@ -1,6 +1,7 @@
 package com.proton.demo.model.address
 
-import javax.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotBlank
+
 
 data class AddressDTO(
     @NotBlank(message = "Street Name is required")

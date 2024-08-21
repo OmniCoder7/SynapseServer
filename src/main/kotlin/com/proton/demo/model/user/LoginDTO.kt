@@ -1,6 +1,7 @@
 package com.proton.demo.model.user
 
-import javax.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotEmpty
+
 
 data class LoginDTO(
     @NotEmpty(message = "Email Address is required")
