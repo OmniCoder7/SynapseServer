@@ -1,8 +1,10 @@
 package com.proton.demo.security
 
 import io.jsonwebtoken.lang.Supplier
+import org.springframework.stereotype.Component
 import kotlin.random.Random
 
+@Component
 object OneTimePasswordHelp {
     private const val LENGTH = 6
 

@@ -1,4 +1,4 @@
-package com.proton.demo.model.address
+package com.proton.demo.model.user
 
 import org.springframework.data.mongodb.core.mapping.Field
 

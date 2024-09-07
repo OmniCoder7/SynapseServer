@@ -1,85 +1,75 @@
 package com.proton.demo.routes
 
-import com.proton.demo.exception.DuplicateEmailException
-import com.proton.demo.model.refresh.JwtResponse
-import com.proton.demo.model.refresh.RefreshTokenRequestDTO
-import com.proton.demo.model.user.LoginDTO
-import com.proton.demo.model.user.LoginResponse
-import com.proton.demo.model.user.RegisterUserDTO
-import com.proton.demo.model.user.User
+import com.proton.demo.model.user.*
 import com.proton.demo.security.JwtService
 import com.proton.demo.service.AuthenticationService
 import com.proton.demo.service.RefreshTokenService
-import com.proton.demo.service.UserService
-import org.springframework.beans.factory.annotation.Autowired
+import com.proton.demo.service.UserAuthService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.*
-
 
 @RestController
 @RequestMapping("/auth")
 class Controller(
-    @Autowired private val userService: UserService,
+    private val authenticationManager: AuthenticationManager,
     private val jwtService: JwtService,
     private val authenticationService: AuthenticationService,
-    private val userDetailsService: UserDetailsService,
     private val refreshTokenService: RefreshTokenService,
+    private val userAuthService: UserAuthService
 ) {
     @PostMapping("/register")
-    fun signUp(@RequestBody registerUserDTO: RegisterUserDTO) =
-        try {
-            ResponseEntity.ok(authenticationService.signUp(registerUserDTO))
-        } catch (e: DuplicateEmailException) {
-            ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build()
-        }
+    fun signUp(@RequestBody registerUserDTO: RegisterUserDTO): RegisterResponse {
+
+        val userId = userAuthService.insertUser(registerUserDTO.toUser())!!.userId
+        authenticationManager.authenticate(
+            UsernamePasswordAuthenticationToken(
+                registerUserDTO.email,
+                registerUserDTO.password
+            )
+        )
+        val accessToken = jwtService.generateToken(registerUserDTO.email)
+        val refreshToken = refreshTokenService.createRefreshToken(registerUserDTO.email).token
+        val res = registerUserDTO.toRegisterResponse(accessToken, refreshToken, userId)
+
+        return res
+    }
 
     @PostMapping("/login")
     fun login(@RequestBody loginDTO: LoginDTO): ResponseEntity<LoginResponse> {
+        val authentication = authenticationManager.authenticate(
+            UsernamePasswordAuthenticationToken(loginDTO.email, loginDTO.password)
+        )
+        SecurityContextHolder.getContext().authentication = authentication
+        val user = authentication.principal as User
+        val accessToken = jwtService.generateToken(user.email)
+        val refreshToken = refreshTokenService.createRefreshToken(user.email)
         return try {
-            ResponseEntity.ok(authenticationService.authenticate(loginDTO))
+            ResponseEntity.ok(LoginResponse(user = user, accessToken = accessToken, refreshToken = refreshToken.token))
         } catch (e: UsernameNotFoundException) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
     }
 
-    @GetMapping("/me")
-    fun authenticatedUser(@RequestBody token: String): ResponseEntity<LoginResponse> {
-        val userDetails = userDetailsService.loadUserByUsername(jwtService.getUsernameFromToken(token))
-        val authToken = UsernamePasswordAuthenticationToken(
-            userDetails,
-            null,
-            userDetails.authorities
-        )
-        SecurityContextHolder.getContext().authentication = authToken
-        val authentication = SecurityContextHolder.getContext().authentication
-        val currentAuthUser = authentication.principal as User
-        return ResponseEntity.ok(
-            LoginResponse(
-                accessToken = token,
-                refreshToken = refreshTokenService.findByUserId(currentAuthUser.userId)!!.token,
-                firstName = currentAuthUser.firstName,
-                lastName = currentAuthUser.lastName,
-                userId = currentAuthUser.userId,
-                email = currentAuthUser.email,
-                gender = currentAuthUser.gender,
-                dob = currentAuthUser.dob,
-                age = currentAuthUser.age,
-                userName = currentAuthUser.userName,
-                number = currentAuthUser.number,
-                address = currentAuthUser.address,
-                cardId = currentAuthUser.cardId
-            )
-        )
+    @GetMapping("/token")
+    fun getCurrentUserByToken(@RequestParam token: String): ResponseEntity<User> {
+        return try {
+            ResponseEntity.ok(userAuthService.authenticate(token))
+        } catch (e: NullPointerException) {
+            ResponseEntity.badRequest().build()
+        }
     }
 
-    @PostMapping("/refresh")
-    fun refreshToken(@RequestBody refreshTokenRequestDTO: RefreshTokenRequestDTO): ResponseEntity<JwtResponse> =
-        ResponseEntity.ok(authenticationService.refresh(refreshTokenRequestDTO))
-
-
+    @GetMapping("/id")
+    fun getCurrentUserById(@RequestParam id: Long): ResponseEntity<User> {
+        return try {
+            ResponseEntity.ok(userAuthService.authenticate(id))
+        } catch (e: NullPointerException) {
+            ResponseEntity.badRequest().build()
+        }
+    }
 }

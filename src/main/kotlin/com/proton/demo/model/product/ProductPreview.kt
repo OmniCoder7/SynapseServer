@@ -1,13 +1,10 @@
 package com.proton.demo.model.product
 
-import org.bson.codecs.pojo.annotations.BsonId
-
 data class ProductPreview(
-    @BsonId val id: Int? = null,
-    val name: String,
-    val price: Double,
-    val discountedPrice: Double,
+    val productId: Long,
+    val productName: String,
+    val price: Int,
     val rating: Double,
-    val isOnSale: Boolean,
-    val imageUrl: String
+    val discount: Int,
+    val imageUrl: String? = null,
 )

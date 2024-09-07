@@ -17,7 +17,6 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
-
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration(
@@ -27,21 +26,21 @@ class SecurityConfiguration(
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        val sourceFlow = flowOf(2L,4L,2L,53L,4L)
+        val sourceFlow = flowOf(2L, 4L, 2L, 53L, 4L)
         sourceFlow.map {
-            delay(it*2)
-
+            delay(it * 2)
         }
-        
+
         http.csrf { it.disable() }
             .authorizeHttpRequests {
-                    it.requestMatchers("/auth/**").permitAll()
+                it.requestMatchers("/auth/**").permitAll()
+                it.requestMatchers("/forgetPassword/**").permitAll()
+                it.requestMatchers("/product/**").permitAll()
                     .anyRequest()
                     .authenticated()
             }
             .exceptionHandling { it.authenticationEntryPoint(authenticationEntryPoint) }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authenticationProvider(authenticationProvider)
             .addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter::class.java

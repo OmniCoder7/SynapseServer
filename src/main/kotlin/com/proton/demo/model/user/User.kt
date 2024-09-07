@@ -1,6 +1,5 @@
 package com.proton.demo.model.user
 
-import com.proton.demo.model.address.Address
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.mongodb.core.mapping.Document
@@ -25,9 +24,10 @@ data class User(
     var userName: String = "",
     val number: Long = 0,
     @Field("password")
-    val loginPassword: String = "", // Bcrypt Hashed
-    val address: List<Address> = listOf(),
-    val cardId: List<Int> = listOf(),
+    val loginPassword: String = "",
+    var cartProducts: List<Long> = emptyList(),
+    var orderIds: List<Long> = emptyList(),
+    var wishListIds: List<Long> = emptyList()
 ) : UserDetails {
     companion object {
         @Transient
@@ -35,29 +35,7 @@ data class User(
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableSetOf()
-
     override fun getPassword(): String = loginPassword
-
     override fun getUsername(): String = email
 
 }
-
-/*
-* Fashion & Apparel
-* Clothing,Men's,Women's,Children's,Footwear,Shoes,Boots,Sandals,Accessories,Jewelry,Watches,Bags,Sportswear,Activewear,Lingerie,Swimwear
-*
-* Electronics & Gadgets
-* Computers, Laptops, Smartphones, Tablets, TVs, Home Entertainment, Audio Equipment, Gaming Consoles, Accessories, Appliances, Kitchenware
-*
-* Home & Decor
-* Furniture, Bedding & Bath, Kitchenware & Appliances, Home Improvement & Tools, Lighting & Decor
-*
-* Food & Beverage
-* Groceries, Staples, Fresh Produce, Meat, Seafood, Snacks, Beverages, Alcohol, Coffee, Tea
-*
-* Toys & Hobbies
-* Toys, Action figures, Dolls, Games, Arts & Crafts, Sports & Outdoor, Collectibles & Memorabilia, Model Kits & Puzzles
-*
-* Others
-* Baby & Kids, Diapers, Clothing, Toys, Pets & Pet Supplies, Office Supplies, Stationery, Travel & Luggage, Automotive, Parts, Books, Music, Digital Services, Streaming, Subscriptions
-* */

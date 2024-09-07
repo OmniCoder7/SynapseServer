@@ -1,7 +1,5 @@
 package com.proton.demo.model.user
 
-import com.proton.demo.model.address.Address
-
 data class RegisterResponse(
     val accessToken: String,
     val refreshToken: String,
@@ -14,6 +12,4 @@ data class RegisterResponse(
     val age: Int = 0,
     var userName: String = "",
     val number: Long = 0,
-    val address: List<Address> = listOf(),
-    val cardId: List<Int> = listOf()
 )

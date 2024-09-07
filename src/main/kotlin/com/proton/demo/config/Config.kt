@@ -1,6 +1,6 @@
 package com.proton.demo.config
 
-import com.proton.demo.service.UserService
+import com.proton.demo.service.UserAuthService
 import kotlinx.coroutines.runBlocking
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,7 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Configuration
 class Config(
-    private val service: UserService,
+    private val service: UserAuthService,
 ) {
     @Bean
     fun userDetailsService(): UserDetailsService =

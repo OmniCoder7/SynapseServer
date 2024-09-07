@@ -1,9 +1,8 @@
 package com.proton.demo.model.user
 
-import com.proton.demo.model.address.Address
-import org.bson.types.ObjectId
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotEmpty
+import org.bson.types.ObjectId
 
 data class RegisterUserDTO(
     val id: ObjectId = ObjectId(),
@@ -38,8 +37,6 @@ data class RegisterUserDTO(
             userName = this.username,
             number = this.number,
             loginPassword = this.password,
-            address = this.address,
-            cardId = this.cardId
         )
 
     fun toRegisterResponse(accessToken: String, refreshToken: String, id: Long) =
@@ -49,6 +46,6 @@ data class RegisterUserDTO(
             userId = id,
             firstName = firstName,
             lastName, email, gender, dob, age,
-            username, number, address, cardId
+            username, number
         )
 }

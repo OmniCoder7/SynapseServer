@@ -9,4 +9,9 @@ data class OneTimePassword(
     val userId: Long,
     val otp: Int,
     val expiryDate: Date
-)
+) {
+    companion object {
+        @Transient
+        val OTP_SEQUENCE = "otp_sequence"
+    }
+}
