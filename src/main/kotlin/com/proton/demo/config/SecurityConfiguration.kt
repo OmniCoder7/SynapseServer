@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -21,8 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 class SecurityConfiguration(
     private val authenticationEntryPoint: JwtAuthEntryPoint,
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
-    private val authenticationProvider: AuthenticationProvider
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {

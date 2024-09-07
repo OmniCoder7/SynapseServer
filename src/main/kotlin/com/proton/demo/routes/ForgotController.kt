@@ -8,7 +8,6 @@ import com.proton.demo.security.OneTimePasswordService
 import com.proton.demo.service.EmailService
 import com.proton.demo.service.UserAuthService
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.mail.MailAuthenticationException
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/forgetPassword")
 class ForgotController(
     private val forgotUtil: PasswordForgotUtil,
-    private val messages: MessageSource,
     private val emailService: EmailService,
     private val userAuthService: UserAuthService,
     private val oneTimePasswordService: OneTimePasswordService

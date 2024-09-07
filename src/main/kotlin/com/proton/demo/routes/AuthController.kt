@@ -2,7 +2,6 @@ package com.proton.demo.routes
 
 import com.proton.demo.model.user.*
 import com.proton.demo.security.JwtService
-import com.proton.demo.service.AuthenticationService
 import com.proton.demo.service.RefreshTokenService
 import com.proton.demo.service.UserAuthService
 import org.springframework.http.HttpStatus
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*
 class Controller(
     private val authenticationManager: AuthenticationManager,
     private val jwtService: JwtService,
-    private val authenticationService: AuthenticationService,
     private val refreshTokenService: RefreshTokenService,
     private val userAuthService: UserAuthService
 ) {
