@@ -2,9 +2,6 @@ package com.proton.demo.config
 
 import com.proton.demo.security.JwtAuthEntryPoint
 import com.proton.demo.security.JwtAuthenticationFilter
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -18,16 +15,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfiguration(
+open class SecurityConfiguration(
     private val authenticationEntryPoint: JwtAuthEntryPoint,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter
 ) {
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        val sourceFlow = flowOf(2L, 4L, 2L, 53L, 4L)
-        sourceFlow.map {
-            delay(it * 2)
-        }
+    open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
 
         http.csrf { it.disable() }
             .authorizeHttpRequests {
@@ -47,7 +40,7 @@ class SecurityConfiguration(
     }
 
     @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource {
+    open fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
 
         configuration.allowedOrigins = listOf("http://localhost:8080")

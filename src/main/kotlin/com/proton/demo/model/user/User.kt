@@ -19,7 +19,6 @@ data class User(
     val gender: String = "",
     @Field("date_of_birth")
     val dob: String = "",
-    val age: Int = 0,
     @Field("username")
     var userName: String = "",
     val number: Long = 0,
