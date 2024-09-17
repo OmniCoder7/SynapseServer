@@ -18,12 +18,12 @@ class JwtService {
         const val REFRESH_TOKEN_VALIDITY: Long = (10 * 24 * 60 * 60 * 1000).toLong()
     }
 
-
     fun getExpirationDateFromToken(token: String) =
         getClaimsFromToken(token, Claims::getExpiration)
 
-    fun getUsernameFromToken(token: String): String? =
-        getClaimsFromToken(token, Claims::getSubject) ?: throw IllegalArgumentException("Token does not contain a subject claim")
+    fun getUsernameFromToken(token: String): String =
+        getClaimsFromToken(token, Claims::getSubject)
+            ?: throw IllegalArgumentException("Token does not contain a subject claim")
 
     fun <T> getClaimsFromToken(token: String, claimsResolver: (Claims) -> T): T {
         val claims = getAllClaimsFromToken(token)

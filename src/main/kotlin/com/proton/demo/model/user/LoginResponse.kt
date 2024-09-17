@@ -29,7 +29,6 @@ data class LoginResponse(
         email = user.email,
         gender = user.gender,
         dob = user.dob,
-        age = user.age,
         userName = user.userName,
         number = user.number,
         cartId = user.cartProducts,

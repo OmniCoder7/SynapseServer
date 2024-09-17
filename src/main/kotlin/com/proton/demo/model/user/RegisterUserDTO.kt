@@ -33,7 +33,6 @@ data class RegisterUserDTO(
             email = this.email,
             gender = this.gender,
             dob = this.dob,
-            age = this.age,
             userName = this.username,
             number = this.number,
             loginPassword = this.password,
