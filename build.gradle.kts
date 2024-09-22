@@ -32,6 +32,7 @@ dependencies {
 	// SPRING SECURITY
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("jakarta.servlet:jakarta.servlet-api:6.1.0")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
 	// MONGO DB
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")

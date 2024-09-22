@@ -38,10 +38,8 @@ data class RegisterUserDTO(
             loginPassword = this.password,
         )
 
-    fun toRegisterResponse(accessToken: String, refreshToken: String, id: Long) =
+    fun toRegisterResponse(id: Long) =
         RegisterResponse(
-            accessToken = accessToken,
-            refreshToken = refreshToken,
             userId = id,
             firstName = firstName,
             lastName, email, gender, dob, age,

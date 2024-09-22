@@ -15,13 +15,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-open class SecurityConfiguration(
+class SecurityConfiguration(
     private val authenticationEntryPoint: JwtAuthEntryPoint,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter
 ) {
     @Bean
-    open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf { it.disable() }
             .authorizeHttpRequests {
                 it.requestMatchers("/auth/**").permitAll()
@@ -32,6 +31,7 @@ open class SecurityConfiguration(
             }
             .exceptionHandling { it.authenticationEntryPoint(authenticationEntryPoint) }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .oauth2ResourceServer { it.jwt {} }
             .addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter::class.java

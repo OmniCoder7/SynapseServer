@@ -1,8 +1,6 @@
 package com.proton.demo.model.user
 
 data class RegisterResponse(
-    val accessToken: String,
-    val refreshToken: String,
     val userId: Long = 0,
     val firstName: String = "",
     val lastName: String = "",

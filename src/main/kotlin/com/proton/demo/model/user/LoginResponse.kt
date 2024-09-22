@@ -3,8 +3,6 @@ package com.proton.demo.model.user
 import org.bson.types.ObjectId
 
 data class LoginResponse(
-    val accessToken: String,
-    val refreshToken: String,
     val id: ObjectId = ObjectId(),
     val userId: Long = 0,
     val firstName: String = "",
@@ -20,9 +18,7 @@ data class LoginResponse(
     val orderIds: List<Long> = listOf(),
     val wishListIds: List<Long> = listOf(),
 ) {
-    constructor(accessToken: String, refreshToken: String, user: User) : this(
-        accessToken = accessToken,
-        refreshToken = refreshToken,
+    constructor(user: User) : this(
         userId = user.userId,
         firstName = user.firstName,
         lastName = user.lastName,

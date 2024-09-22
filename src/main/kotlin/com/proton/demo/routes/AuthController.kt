@@ -31,11 +31,14 @@ class Controller(
                 registerUserDTO.password
             )
         )
-        val accessToken = jwtService.generateToken(registerUserDTO.email)
-        val refreshToken = refreshTokenService.createRefreshToken(registerUserDTO.email).token
-        val res = registerUserDTO.toRegisterResponse(accessToken, refreshToken, user.userId)
+        val responseHeader = HttpHeaders()
+        responseHeader.set(HttpHeaders.AUTHORIZATION, jwtService.generateToken(registerUserDTO.email))
+        responseHeader.set("X-Refresh-Token", refreshTokenService.createRefreshToken(registerUserDTO.email).token)
+        val res = registerUserDTO.toRegisterResponse(user.userId)
 
-        return ResponseEntity.ok(res)
+        return ResponseEntity.ok()
+            .headers(responseHeader)
+            .body(res)
     }
 
     @PostMapping("/login")
@@ -49,21 +52,20 @@ class Controller(
         )
         SecurityContextHolder.getContext().authentication = authentication
         val user = authentication.principal as User
-        val accessToken = jwtService.generateToken(user.email)
-        val refreshToken = refreshTokenService.createRefreshToken(user.email)
-        return ResponseEntity.ok(
-            LoginResponse(
-                user = user,
-                accessToken = accessToken,
-                refreshToken = refreshToken.token
-            )
-        )
+        val responseHeader = HttpHeaders()
+        responseHeader.set(HttpHeaders.AUTHORIZATION, jwtService.generateToken(loginDTO.email))
+        responseHeader.set("X-Refresh-Token", refreshTokenService.createRefreshToken(loginDTO.email).token)
+        return ResponseEntity.ok()
+            .headers(responseHeader)
+            .body(LoginResponse(user))
     }
 
     @GetMapping("/token")
-    fun getCurrentUserByToken(@RequestHeader(HttpHeaders.AUTHORIZATION) token: String): ResponseEntity<User> {
-        val token = token.substringAfter("Bearer ")
-        println("Extracted Token: $token")
+    fun getCurrentUserByToken(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) accessToken: String,
+        @RequestHeader("X-Refresh-Token") refreshToken: String
+    ): ResponseEntity<User> {
+        val token = accessToken.substringAfter("Bearer ")
         return try {
             ResponseEntity.ok(userAuthService.authenticate(token))
         } catch (_: IllegalArgumentException) {
@@ -71,7 +73,19 @@ class Controller(
         } catch (_: UserNotFoundException) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         } catch (_: TokenExpiredException) {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+            if (refreshTokenService.isExpired(refreshToken))
+                ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+            else {
+                val user = userAuthService.getUser(jwtService.getUsernameFromToken(token))
+                    ?: return ResponseEntity.badRequest().build()
+                val newRefreshToken = refreshTokenService.createRefreshToken(user.email)
+                val newAccessToken = jwtService.generateToken(user.email)
+                val responseHeader = HttpHeaders()
+                responseHeader.set(HttpHeaders.AUTHORIZATION, newAccessToken)
+                responseHeader.set("X-Refresh-Token", newRefreshToken.token)
+                ResponseEntity.ok().headers(responseHeader)
+                    .body(userAuthService.authenticate(newRefreshToken.userId))
+            }
         }
     }
 

@@ -12,13 +12,11 @@ class AuthenticationService(
     @Autowired private val refreshTokenService: RefreshTokenService,
     @Autowired private val jwtService: JwtService
 ) {
-
-
     fun refresh(refreshTokenRequestDTO: RefreshTokenRequestDTO): JwtResponse {
         val refreshToken = refreshTokenService.findByToken(refreshTokenRequestDTO.token)
             ?: throw RuntimeException("Refresh token not in database")
         val user = userAuthService.getUser(refreshToken.userId)
-        if (refreshTokenService.isExpired(refreshToken))
+        if (refreshTokenService.isExpired(refreshToken.token))
             refreshTokenService.createRefreshToken(user!!.username)
         return JwtResponse(accessToken = jwtService.generateToken(user!!.username), refreshToken = refreshToken.token)
     }

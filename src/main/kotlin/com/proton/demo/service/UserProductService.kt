@@ -16,34 +16,34 @@ class UserProductService(
     private val orderService: OrderService,
     private val userService: UserAuthService
 ) {
-    fun addToCart(product: Product, user: User) =
+    fun addToCart(productId: Long, user: User) =
         mongoTemplate.updateFirst(
             Query(Criteria.where(User::userId.name).`is`(user.userName)),
-            Update().set(User::cartProducts.name, listOf(user.cartProducts, product.productId)),
+            Update().set(User::cartProducts.name, listOf(user.cartProducts, productId)),
             User::class.java
         ).wasAcknowledged()
 
-    fun removeFromCart(product: Product, user: User) =
+    fun removeFromCart(productId: Long, user: User) =
         mongoTemplate.updateFirst(
             Query(Criteria.where(User::userId.name).`is`(user.userName)),
-            Update().set(User::cartProducts.name, user.cartProducts.filter { it != product.productId }),
+            Update().set(User::cartProducts.name, user.cartProducts.filter { it != productId }),
             User::class.java
         ).wasAcknowledged()
 
     fun addOrderHistory(order: Order) =
         orderService.saveOrder(order)
 
-    fun addToWishList(product: Product, user: User) =
+    fun addToWishList(productId: Long, user: User) =
         mongoTemplate.updateFirst(
             Query(Criteria.where(User::userId.name).`is`(user.userName)),
-            Update().set(User::wishListIds.name, listOf(user.wishListIds, product.productId)),
+            Update().set(User::wishListIds.name, listOf(user.wishListIds, productId)),
             User::class.java
         ).wasAcknowledged()
 
-    fun removeFromWishList(product: Product, user: User) =
+    fun removeFromWishList(productId: Long, user: User) =
         mongoTemplate.updateFirst(
             Query(Criteria.where(User::userId.name).`is`(user.userName)),
-            Update().set(User::wishListIds.name, user.wishListIds.filter { it != product.productId }),
+            Update().set(User::wishListIds.name, user.wishListIds.filter { it != productId }),
             User::class.java
         ).wasAcknowledged()
 

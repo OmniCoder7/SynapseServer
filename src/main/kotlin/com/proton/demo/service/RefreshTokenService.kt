@@ -31,7 +31,8 @@ class RefreshTokenService(
     fun findByToken(token: String?) =
         mongoTemplate.findOne(Query.query(Criteria.where("token").`is`(token)), RefreshToken::class.java)
 
-    fun isExpired(token: RefreshToken): Boolean {
+    fun isExpired(token: String): Boolean {
+        val token = findByToken(token) ?: return false
         if (token.expiryDate < Instant.now()) {
             mongoTemplate.remove(token)
             return true

@@ -17,7 +17,6 @@ data class Product(
     val tags: List<String> = emptyList(),
 )
 
-@Document(collection = "Dimensions")
 data class Dimensions(
     val length: Double,
     val width: Double,
